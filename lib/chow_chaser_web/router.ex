@@ -18,6 +18,13 @@ defmodule ChowChaserWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/food_trucks", FoodTruckLive.Index, :index
+    live "/food_trucks/new", FoodTruckLive.Index, :new
+    live "/food_trucks/:id/edit", FoodTruckLive.Index, :edit
+
+    live "/food_trucks/:id", FoodTruckLive.Show, :show
+    live "/food_trucks/:id/show/edit", FoodTruckLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

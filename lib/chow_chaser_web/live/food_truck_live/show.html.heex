@@ -1,0 +1,34 @@
+<.header>
+  Food truck <%= @food_truck.id %>
+  <:subtitle>This is a food_truck record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/food_trucks/#{@food_truck}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit food_truck</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Location"><%= @food_truck.location_id %></:item>
+  <:item title="Applicant"><%= @food_truck.applicant %></:item>
+  <:item title="Facility type"><%= @food_truck.facility_type %></:item>
+  <:item title="Location description"><%= @food_truck.location_description %></:item>
+  <:item title="Address"><%= @food_truck.address %></:item>
+  <:item title="Status"><%= @food_truck.status %></:item>
+  <:item title="Food items"><%= @food_truck.food_items %></:item>
+  <:item title="Latitude"><%= @food_truck.latitude %></:item>
+  <:item title="Longitude"><%= @food_truck.longitude %></:item>
+</.list>
+
+<.back navigate={~p"/food_trucks"}>Back to food_trucks</.back>
+
+<.modal :if={@live_action == :edit} id="food_truck-modal" show on_cancel={JS.patch(~p"/food_trucks/#{@food_truck}")}>
+  <.live_component
+    module={ChowChaserWeb.FoodTruckLive.FormComponent}
+    id={@food_truck.id}
+    title={@page_title}
+    action={@live_action}
+    food_truck={@food_truck}
+    patch={~p"/food_trucks/#{@food_truck}"}
+  />
+</.modal>
