@@ -19,7 +19,27 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
   @doc false
   def changeset(food_truck, attrs) do
     food_truck
-    |> cast(attrs, [:location_id, :applicant, :facility_type, :location_description, :address, :status, :food_items, :latitude, :longitude])
-    |> validate_required([:location_id, :applicant, :facility_type, :location_description, :address, :status, :food_items, :latitude, :longitude])
+    |> cast(attrs, [
+      :location_id,
+      :applicant,
+      :facility_type,
+      :location_description,
+      :address,
+      :status,
+      :food_items,
+      :latitude,
+      :longitude
+    ])
+    |> validate_required([
+      :location_id,
+      :applicant,
+      :facility_type,
+      :location_description,
+      :address,
+      :status,
+      :food_items,
+      :latitude,
+      :longitude
+    ])
   end
 end

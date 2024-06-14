@@ -4,9 +4,39 @@ defmodule ChowChaserWeb.FoodTruckLiveTest do
   import Phoenix.LiveViewTest
   import ChowChaser.FoodTrucksFixtures
 
-  @create_attrs %{status: "some status", address: "some address", location_id: 42, applicant: "some applicant", facility_type: "some facility_type", location_description: "some location_description", food_items: "some food_items", latitude: "some latitude", longitude: "some longitude"}
-  @update_attrs %{status: "some updated status", address: "some updated address", location_id: 43, applicant: "some updated applicant", facility_type: "some updated facility_type", location_description: "some updated location_description", food_items: "some updated food_items", latitude: "some updated latitude", longitude: "some updated longitude"}
-  @invalid_attrs %{status: nil, address: nil, location_id: nil, applicant: nil, facility_type: nil, location_description: nil, food_items: nil, latitude: nil, longitude: nil}
+  @create_attrs %{
+    status: "some status",
+    address: "some address",
+    location_id: 42,
+    applicant: "some applicant",
+    facility_type: "some facility_type",
+    location_description: "some location_description",
+    food_items: "some food_items",
+    latitude: "some latitude",
+    longitude: "some longitude"
+  }
+  @update_attrs %{
+    status: "some updated status",
+    address: "some updated address",
+    location_id: 43,
+    applicant: "some updated applicant",
+    facility_type: "some updated facility_type",
+    location_description: "some updated location_description",
+    food_items: "some updated food_items",
+    latitude: "some updated latitude",
+    longitude: "some updated longitude"
+  }
+  @invalid_attrs %{
+    status: nil,
+    address: nil,
+    location_id: nil,
+    applicant: nil,
+    facility_type: nil,
+    location_description: nil,
+    food_items: nil,
+    latitude: nil,
+    longitude: nil
+  }
 
   defp create_food_truck(_) do
     food_truck = food_truck_fixture()

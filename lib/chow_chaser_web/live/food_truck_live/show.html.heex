@@ -22,7 +22,12 @@
 
 <.back navigate={~p"/food_trucks"}>Back to food_trucks</.back>
 
-<.modal :if={@live_action == :edit} id="food_truck-modal" show on_cancel={JS.patch(~p"/food_trucks/#{@food_truck}")}>
+<.modal
+  :if={@live_action == :edit}
+  id="food_truck-modal"
+  show
+  on_cancel={JS.patch(~p"/food_trucks/#{@food_truck}")}
+>
   <.live_component
     module={ChowChaserWeb.FoodTruckLive.FormComponent}
     id={@food_truck.id}
