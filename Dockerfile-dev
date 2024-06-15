@@ -1,0 +1,31 @@
+ARG ELIXIR_VERSION=1.17.0
+ARG OTP_VERSION=27
+
+FROM "elixir:${ELIXIR_VERSION}-otp-${OTP_VERSION}-slim"
+
+RUN apt-get update -y
+RUN apt-get install -y ca-certificates git inotify-tools postgresql-client locales
+RUN apt-get clean
+
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN mkdir /app
+COPY . /app
+WORKDIR /app
+
+RUN mix local.hex --if-missing
+RUN mix local.rebar --if-missing
+RUN mix archive.install hex phx_new
+RUN mix deps.get
+RUN mix deps.compile
+RUN mix compile
+RUN mix assets.setup
+RUN mix assets.build
+RUN mix assets.deploy
+
+RUN chmod +x /app/bin/entrypoint.sh
+
+CMD ["/app/bin/entrypoint.sh"]

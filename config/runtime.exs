@@ -20,6 +20,15 @@ if System.get_env("PHX_SERVER") do
   config :chow_chaser, ChowChaserWeb.Endpoint, server: true
 end
 
+if config_env() == :dev do
+  config :chow_chaser, ChowChaser.Repo,
+    username: System.get_env("POSTGRES_USER", "postgres"),
+    password: System.get_env("POSTGRES_PASSWORD", "postgres"),
+    database: System.get_env("POSTGRES_DB", "chow_chaser_dev"),
+    hostname: System.get_env("POSTGRES_HOST", "localhost"),
+    port: System.get_env("POSTGRES_PORT", "5432")
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

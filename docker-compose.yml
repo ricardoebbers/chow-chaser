@@ -1,0 +1,27 @@
+services:
+  app:
+    container_name: "chow-chaser-app"
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    ports:
+      - 4000:4000
+    depends_on:
+      - db
+    env_file:
+      - env/dev.env
+    volumes:
+      - .:/app
+  db:
+    container_name: "chow-chaser-db"
+    image: postgis/postgis:15-3.4
+    platform: linux/amd64
+    ports:
+      - 5432:5432
+    env_file:
+      - env/dev.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

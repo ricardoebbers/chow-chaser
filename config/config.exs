@@ -11,6 +11,8 @@ config :chow_chaser,
   ecto_repos: [ChowChaser.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :chow_chaser, ChowChaser.Repo, types: ChowChaser.PostgrexTypes
+
 # Configures the endpoint
 config :chow_chaser, ChowChaserWeb.Endpoint,
   url: [host: "localhost"],
@@ -60,6 +62,9 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :geo_postgis,
+  json_library: Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

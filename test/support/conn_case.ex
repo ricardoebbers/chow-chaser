@@ -27,7 +27,9 @@ defmodule ChowChaserWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
+      import Phoenix.LiveViewTest
       import ChowChaserWeb.ConnCase
+      import ChowChaser.Factory
     end
   end
 

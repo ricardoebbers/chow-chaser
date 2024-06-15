@@ -24,6 +24,7 @@ defmodule ChowChaser.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import ChowChaser.DataCase
+      import ChowChaser.Factory
     end
   end
 
