@@ -63,8 +63,12 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :geo_postgis,
-  json_library: Jason
+config :geo_postgis, json_library: Jason
+
+config :chow_chaser, :geocoder,
+  worker_config: [
+    provider: Geocoder.Providers.OpenStreetMaps
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -67,6 +67,7 @@ defmodule ChowChaser.MixProject do
 
   defp application_deps do
     [
+      {:httpoison, "~> 1.0", override: true},
       # PostGIS support for Ecto
       {:geo_postgis, "~> 3.7"},
       # Socrata API wrapper
@@ -74,7 +75,7 @@ defmodule ChowChaser.MixProject do
       # Oban for background jobs
       {:oban, "~> 2.17"},
       # Geocoder for geocoding addresses
-      {:geocoder, "~> 1.1"},
+      {:geocoder, "~> 2.0"},
       # Static code analysis
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       # Testing factories

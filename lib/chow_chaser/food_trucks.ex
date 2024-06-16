@@ -25,18 +25,18 @@ defmodule ChowChaser.FoodTrucks do
 
   @spec list_by(map()) :: {:ok, list(FoodTruck.t())} | {:error, term()}
   def list_by(filters = %{reference: reference}) do
-    with {:ok, %Geocoder.Coords{lat: latitude, lon: longitude}} <- Geocoder.call(reference) do
-      filters =
-        filters
-        |> Map.put(:coordinates, {longitude, latitude})
-        |> Map.put(:radius, Map.get(filters, :radius, 500))
+    case Geocoder.call(reference) do
+      {:ok, %Geocoder.Coords{lat: latitude, lon: longitude}} ->
+        filters =
+          filters
+          |> Map.put(:coordinates, {longitude, latitude})
+          |> Map.put(:radius, Map.get(filters, :radius, 500))
 
-      do_list_by(filters)
+        do_list_by(filters)
+
+      {:error, nil} ->
+        {:error, "Invalid address"}
     end
-  rescue
-    err ->
-      Logger.error("Failed to list food trucks: #{inspect(err)}")
-      {:error, "Invalid address"}
   end
 
   def list_by(filters), do: do_list_by(filters)

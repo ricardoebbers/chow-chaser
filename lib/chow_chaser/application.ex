@@ -17,7 +17,8 @@ defmodule ChowChaser.Application do
       # Start a worker by calling: ChowChaser.Worker.start_link(arg)
       # {ChowChaser.Worker, arg},
       # Start to serve requests, typically the last entry
-      ChowChaserWeb.Endpoint
+      ChowChaserWeb.Endpoint,
+      {Geocoder.Supervisor, geocoder_config()}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
@@ -32,5 +33,9 @@ defmodule ChowChaser.Application do
   def config_change(changed, _new, removed) do
     ChowChaserWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def geocoder_config do
+    Application.get_env(:chow_chaser, :geocoder)
   end
 end
