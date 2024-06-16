@@ -1,11 +1,9 @@
 defmodule ChowChaserWeb.FoodTruckLive.Index do
   use ChowChaserWeb, :live_view
 
-  alias ChowChaser.FoodTrucks
-
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :food_trucks, FoodTrucks.all())}
+    {:ok, stream(socket, :food_trucks, ChowChaser.list_all())}
   end
 
   @impl true
@@ -15,7 +13,6 @@ defmodule ChowChaserWeb.FoodTruckLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Food trucks")
-    |> assign(:food_truck, nil)
+    |> assign(:page_title, "Listing Food trucks in San Francisco")
   end
 end

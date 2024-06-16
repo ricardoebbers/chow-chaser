@@ -70,6 +70,12 @@ config :chow_chaser, :geocoder,
     provider: Geocoder.Providers.OpenStreetMaps
   ]
 
+config :chow_chaser, Oban,
+  engine: Oban.Engines.Basic,
+  plugins: [{Oban.Plugins.Cron, crontab: [{"@daily", Workers.SyncTrucks}]}],
+  queues: [default: 2],
+  repo: ChowChaser.Repo
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

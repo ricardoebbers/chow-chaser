@@ -8,8 +8,14 @@ defmodule ChowChaser do
   """
 
   alias ChowChaser.FoodTrucks
+  alias ChowChaser.Models.Truck
 
-  @spec upsert_all(list(FoodTrucks.FoodTruck.params())) ::
-          {:ok, list(FoodTrucks.FoodTruck.t())} | {:error, term()}
+  @spec upsert_all(list(map())) :: {:ok, list(Truck.t())} | {:error, term()}
   defdelegate upsert_all(args), to: FoodTrucks
+
+  @spec list_all() :: list(Truck.t())
+  defdelegate list_all, to: FoodTrucks
+
+  @spec list_by(map()) :: {:ok, list(Truck.t())} | {:error, term()}
+  defdelegate list_by(filters), to: FoodTrucks
 end

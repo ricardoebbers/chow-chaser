@@ -3,5 +3,6 @@ defmodule ChowChaser.Factory do
   The Factory module.
   """
   use ExMachina.Ecto, repo: ChowChaser.Repo
-  use ChowChaser.Factory.FoodTrucksFactory
+  use ChowChaser.Factory.ItemFactory
+  use ChowChaser.Factory.TruckFactory
 end

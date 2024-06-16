@@ -64,3 +64,5 @@ config :chow_chaser, :geocoder,
       }
     }
   ]
+
+config :chow_chaser, Oban, testing: :inline

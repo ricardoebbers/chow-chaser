@@ -18,7 +18,8 @@ defmodule ChowChaser.Application do
       # {ChowChaser.Worker, arg},
       # Start to serve requests, typically the last entry
       ChowChaserWeb.Endpoint,
-      {Geocoder.Supervisor, geocoder_config()}
+      {Geocoder.Supervisor, geocoder_config()},
+      {Oban, Application.fetch_env!(:chow_chaser, Oban)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

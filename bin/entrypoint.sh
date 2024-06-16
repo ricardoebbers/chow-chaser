@@ -13,7 +13,8 @@ done
 if [[ -z `psql -Atqc "\\list $POSTGRES_DB"` ]]; then
   echo "Database $POSTGRES_DB does not exist. Creating..."
   mix ecto.setup
+  mix one_offs.sync_trucks
   echo "Database $POSTGRES_DB created."
 fi
 
-iex -S mix phx.server
+mix phx.server

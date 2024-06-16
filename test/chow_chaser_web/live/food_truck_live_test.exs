@@ -4,11 +4,11 @@ defmodule ChowChaserWeb.FoodTruckLiveTest do
 
   describe "index" do
     setup do
-      insert_list(2, :food_truck)
+      insert_list(2, :truck)
       :ok
     end
 
-    test "lists all food_trucks", %{conn: _conn} do
+    test "lists all trucks", %{conn: _conn} do
       flunk("To be implemented")
     end
   end

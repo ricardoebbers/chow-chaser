@@ -7,30 +7,15 @@
   - [x] Applicant name
   - [x] Food items sold
   - [x] Status of the permit (`Approved`, `Expired`, `Issued`, `Requested` or `Suspend` (sic))
-- [ ] Periodically synchronizes the internal database with the `Mobile Food Facility Permit` open data
+- [x] Periodically synchronizes the internal database with the `Mobile Food Facility Permit` open data
   - [x] Integrates with the [open data resource](https://data.sfgov.org/resource/rqzj-sfat/) using [exsoda](https://hex.pm/packages/exsoda) library
-  - [x] Inserts/updates `food_trucks` based on their `locationid` identifiers
-  - [ ] Uses [oban](https://hex.pm/packages/oban) to run the asynchronous jobs
+  - [x] Inserts/updates `trucks` based on their `locationid` identifiers
+  - [x] Uses [oban](https://hex.pm/packages/oban) to run the asynchronous jobs
 - [x] Uses PostGIS exstension to encode the geospatial data from the food trucks in the database
   - [x] Geocodes locations using [geocoder](https://hex.pm/packages/geocoder) library
   - [x] Perform geospatial queries with [geo_postgis](https://hex.pm/packages/geo_postgis) library
 
-## TO-DO checklist
-- [x] Generate a Phoenix Live view application
-- [x] Add `geo_postgis` to the project
-- [x] Add `exsoda` to the project
-- [x] Add `oban` to the project
-- [x] Add `geocoder` to the project
-- [x] Add `credo` to the project
-- [x] Add `exmachina` to the project
-- [x] Create a `food_trucks` table, with a `geom` field that encodes the longitude/latitude
-- [x] Create a `food_items` table to hold all food items options
-- [x] Create a `trucks_items` relationship between the two tables
-- [x] Implement converting an address string to a point (longitude/latitude)
-- [x] Implement an upsert functionality to the food_trucks API
-- [x] Use docker-compose to run the project locally
-- [ ] Create a worker to list all food trucks from the `Mobile Food Facility Permit` and upsert them in the food_trucks table
-- [ ] Configure a cronjob to run that worker once a day
+## TO-DO
 - [ ] Create a page that allows the user to search by address and/or filters, and lists all food trucks matching those conditions, ordered by the closest one, if an address is provided
 - [ ] Deploy the application to fly.io
 
@@ -59,6 +44,6 @@
 
 Use `docker-compose` to start the server locally:
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 Visit the page in http://localhost:4000

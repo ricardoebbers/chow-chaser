@@ -3,7 +3,7 @@ defmodule ChowChaser.FoodTrucksTest do
   use ChowChaser.DataCase, async: true
 
   alias ChowChaser.FoodTrucks
-  alias ChowChaser.FoodTrucks.{FoodItem, FoodTruck}
+  alias ChowChaser.Models.{Item, Truck}
 
   describe "all/0" do
     test "returns empty list" do
@@ -11,10 +11,8 @@ defmodule ChowChaser.FoodTrucksTest do
     end
 
     test "lists all food trucks" do
-      insert_list(2, :food_truck)
-      food_trucks = FoodTrucks.all()
-
-      assert length(food_trucks) == 2
+      insert_list(2, :truck)
+      assert length(FoodTrucks.all()) == 2
     end
   end
 
@@ -29,7 +27,7 @@ defmodule ChowChaser.FoodTrucksTest do
         {"Brazuca Grill", "1750 FOLSOM ST", {-122.41598117460148, 37.76890352056648}, :approved}
       ]
       |> Enum.map(fn {applicant, address, coordinates, status} ->
-        insert(:food_truck,
+        insert(:truck,
           applicant: applicant,
           address: address,
           location: build(:location, coordinates: coordinates),
@@ -43,20 +41,16 @@ defmodule ChowChaser.FoodTrucksTest do
     test "filters by address and radius" do
       address = "150 OTIS ST"
 
-      {:ok, food_trucks} = FoodTrucks.list_by(%{reference: address, radius: 400})
+      {:ok, trucks} = FoodTrucks.list_by(%{reference: address, radius: 400})
 
       assert [
-               %FoodTruck{
-                 address: "150 OTIS ST",
-                 applicant: "Brazuca Grill",
-                 distance: 86.122089
-               },
-               %FoodTruck{
+               %Truck{address: "150 OTIS ST", applicant: "Brazuca Grill", distance: 86.122089},
+               %Truck{
                  address: "1800 MISSION ST",
                  applicant: "CARDONA'S FOOD TRUCK",
                  distance: 394.33132991
                }
-             ] = food_trucks
+             ] = trucks
     end
 
     test "filters by status" do
@@ -72,56 +66,54 @@ defmodule ChowChaser.FoodTrucksTest do
                FoodTrucks.list_by(%{applicant: "Brazuca Grill"})
     end
 
-    test "filters by food types" do
-      insert(:food_truck, food_items: [build(:food_item, name: "Burritos")])
+    test "filters by items" do
+      insert(:truck, items: [build(:item, name: "Burritos")])
 
-      assert {:ok, [%{food_items: [%{name: "Burritos"}]}]} =
-               FoodTrucks.list_by(%{food_types: "Burritos"})
+      assert {:ok, [%{items: [%{name: "Burritos"}]}]} =
+               FoodTrucks.list_by(%{items: "Burritos"})
     end
   end
 
   describe "upsert_all/1" do
     test "inserts food trucks" do
-      food_trucks = [
-        params_for(:food_truck, applicant: "Brazuca Grill", object_id: 123, status: "REQUESTED")
-        |> Map.merge(%{food_items: "Brazilian", location_description: nil}),
-        params_for(:food_truck, applicant: "CARDONA'S FOOD TRUCK", object_id: 456)
-        |> Map.merge(%{food_items: "Tacos: Burritos", latitude: 30.0, longitude: 40.0})
+      trucks = [
+        params_for(:truck, applicant: "Brazuca Grill", object_id: 123, status: "REQUESTED")
+        |> Map.merge(%{items: "Brazilian", location_description: nil}),
+        params_for(:truck, applicant: "CARDONA'S FOOD TRUCK", object_id: 456)
+        |> Map.merge(%{items: "Tacos: Burritos", latitude: 30.0, longitude: 40.0})
       ]
 
-      assert {:ok, _} = FoodTrucks.upsert_all(food_trucks)
+      assert {:ok, _} = FoodTrucks.upsert_all(trucks)
     end
 
     test "upserts existing food trucks based on their object id" do
-      %{id: original_id} = insert(:food_truck, applicant: "Brazuca Grill", object_id: 123)
+      %{id: original_id} = insert(:truck, applicant: "Brazuca Grill", object_id: 123)
 
-      food_trucks = [
-        params_for(:food_truck, applicant: "Another Grill", object_id: 123, food_items: [])
-      ]
+      trucks = [params_for(:truck, applicant: "Another Grill", object_id: 123, items: [])]
 
-      assert {:ok, [food_truck]} = FoodTrucks.upsert_all(food_trucks)
+      assert {:ok, [truck]} = FoodTrucks.upsert_all(trucks)
 
-      assert %{id: ^original_id, applicant: "Another Grill", object_id: 123} = food_truck
+      assert %{id: ^original_id, applicant: "Another Grill", object_id: 123} = truck
     end
 
     test "creates new food items" do
-      food_trucks = [params_for(:food_truck) |> Map.put(:food_items, "Burritos")]
+      trucks = [params_for(:truck) |> Map.put(:items, "Burritos")]
 
-      assert {:ok, [food_truck]} = FoodTrucks.upsert_all(food_trucks)
+      assert {:ok, [truck]} = FoodTrucks.upsert_all(trucks)
 
-      assert %{food_items: [%{name: "Burritos"}]} = food_truck
-      assert Repo.aggregate(FoodItem, :count) == 1
+      assert %{items: [%{name: "Burritos"}]} = truck
+      assert Repo.aggregate(Item, :count) == 1
     end
 
     test "associates with existing food items" do
-      insert(:food_item, name: "Burritos")
+      insert(:item, name: "Burritos")
 
-      food_trucks = [params_for(:food_truck) |> Map.put(:food_items, "Burritos")]
+      trucks = [params_for(:truck) |> Map.put(:items, "Burritos")]
 
-      assert {:ok, [food_truck]} = FoodTrucks.upsert_all(food_trucks)
+      assert {:ok, [truck]} = FoodTrucks.upsert_all(trucks)
 
-      assert %{food_items: [%{name: "Burritos"}]} = food_truck
-      assert Repo.aggregate(FoodItem, :count) == 1
+      assert %{items: [%{name: "Burritos"}]} = truck
+      assert Repo.aggregate(Item, :count) == 1
     end
   end
 end

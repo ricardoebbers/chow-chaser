@@ -1,22 +1,14 @@
-defmodule ChowChaser.Factory.FoodTrucksFactory do
+defmodule ChowChaser.Factory.TruckFactory do
   @moduledoc false
-  alias ChowChaser.FoodTrucks.FoodTruck
-
   defmacro __using__(_opts) do
     quote do
-      alias ChowChaser.FoodTrucks.{FoodItem, FoodTruck}
+      alias ChowChaser.Models.Truck
 
-      def food_item_factory do
-        %FoodItem{
-          name: sequence(:food_item, &"Food Item #{&1}")
-        }
-      end
-
-      def food_truck_factory do
-        %FoodTruck{
+      def truck_factory do
+        %Truck{
           address: "2450 TARAVAL ST",
           applicant: "Swell Cream & Coffee",
-          food_items: build_list(2, :food_item),
+          items: build_list(2, :item),
           location_description: "TARAVAL ST: 34TH AVE to 35TH AVE (2400 - 2499)",
           location: build(:location),
           object_id: sequence(:object_id, &"#{&1}"),
