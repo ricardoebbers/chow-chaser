@@ -37,3 +37,29 @@ config :phoenix_live_view,
   enable_expensive_runtime_checks: true
 
 config :geocoder, :worker, provider: Geocoder.Providers.Fake
+
+config :geocoder, Geocoder.Worker,
+  data: %{
+    ~r/.*150 OTIS ST.*/ => %{
+      lat: 37.7713678,
+      lon: -122.420419,
+      bounds: %{
+        top: 37.7713178,
+        right: -122.420369,
+        bottom: 37.7714178,
+        left: -122.420469
+      },
+      location: %{
+        city: "San Francisco",
+        state: "California",
+        county: "Mission District",
+        country: "United States",
+        postal_code: "94103",
+        street: "Otis Street",
+        street_number: nil,
+        country_code: "us",
+        formatted_address:
+          "150 Otis Street, Otis Street, Hayes Valley, Mission District, San Francisco, California, 94103, United States"
+      }
+    }
+  }

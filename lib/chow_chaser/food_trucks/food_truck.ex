@@ -14,6 +14,7 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
           id: integer(),
           address: String.t(),
           applicant: String.t(),
+          distance: float(),
           object_id: integer(),
           status: atom() | String.t(),
           location_description: String.t(),
@@ -46,7 +47,11 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
     field :object_id, :integer
     field :status, Ecto.Enum, values: @status_values
 
-    many_to_many :food_items, FoodItem, join_through: "food_trucks_items"
+    field :distance, :float, virtual: true
+
+    many_to_many :food_items, FoodItem,
+      join_through: "food_trucks_items",
+      preload_order: [asc: :name]
 
     timestamps(type: :utc_datetime)
   end

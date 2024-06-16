@@ -5,7 +5,7 @@ defmodule ChowChaserWeb.FoodTruckLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :food_trucks, FoodTrucks.list_food_trucks())}
+    {:ok, stream(socket, :food_trucks, FoodTrucks.all())}
   end
 
   @impl true

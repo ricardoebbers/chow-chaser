@@ -3,10 +3,11 @@ defmodule ChowChaser.FoodTrucks do
   The FoodTrucks context.
   """
 
-  import Ecto.Query, warn: false
+  alias ChowChaser.FoodTrucks.FoodTruck
+  alias ChowChaser.FoodTrucks.Queries
   alias ChowChaser.Repo
 
-  alias ChowChaser.FoodTrucks.FoodTruck
+  require Logger
 
   @doc """
   Returns all food trucks.
@@ -17,7 +18,36 @@ defmodule ChowChaser.FoodTrucks do
       [%FoodTruck{}, ...]
 
   """
+  @spec all :: list(FoodTruck.t())
   def all do
     Repo.all(FoodTruck)
+  end
+
+  @spec list_by(map()) :: {:ok, list(FoodTruck.t())} | {:error, term()}
+  def list_by(filters = %{reference: reference}) do
+    with {:ok, %Geocoder.Coords{lat: latitude, lon: longitude}} <- Geocoder.call(reference) do
+      filters =
+        filters
+        |> Map.put(:coordinates, {longitude, latitude})
+        |> Map.put(:radius, Map.get(filters, :radius, 500))
+
+      do_list_by(filters)
+    end
+  rescue
+    err ->
+      Logger.error("Failed to list food trucks: #{inspect(err)}")
+      {:error, "Invalid address"}
+  end
+
+  def list_by(filters), do: do_list_by(filters)
+
+  defp do_list_by(filters) do
+    food_trucks =
+      Queries.from_food_truck()
+      |> Queries.filter_by(filters)
+      |> Queries.with_distances(filters)
+      |> Repo.all()
+
+    {:ok, food_trucks}
   end
 end

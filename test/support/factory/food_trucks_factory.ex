@@ -24,18 +24,11 @@ defmodule ChowChaser.Factory.FoodTrucksFactory do
         }
       end
 
-      def location_factory(attrs) do
-        latitude = Map.get(attrs, :latitude, 37.74255037355925)
-        longitude = Map.get(attrs, :longitude, -122.49267708221483)
-
-        location = %Geo.Point{
-          coordinates: {longitude, latitude},
+      def location_factory do
+        %Geo.Point{
+          coordinates: {-122.4194, 37.7749},
           srid: 4326
         }
-
-        location
-        |> merge_attributes(attrs)
-        |> evaluate_lazy_attributes()
       end
     end
   end

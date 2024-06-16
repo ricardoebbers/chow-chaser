@@ -7,11 +7,7 @@
   </:actions>
 </.header>
 
-<.table
-  id="food_trucks"
-  rows={@streams.food_trucks}
-  row_click={fn {_id, food_truck} -> JS.navigate(~p"/food_trucks/#{food_truck}") end}
->
+<.table id="food_trucks" rows={@streams.food_trucks}>
   <:col :let={{_id, food_truck}} label="Location"><%= food_truck.location_id %></:col>
   <:col :let={{_id, food_truck}} label="Applicant"><%= food_truck.applicant %></:col>
   <:col :let={{_id, food_truck}} label="Facility type"><%= food_truck.facility_type %></:col>
