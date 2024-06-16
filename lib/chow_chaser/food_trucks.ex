@@ -3,9 +3,9 @@ defmodule ChowChaser.FoodTrucks do
   The FoodTrucks context.
   """
 
-  alias ChowChaser.FoodTrucks.FoodTruck
-  alias ChowChaser.FoodTrucks.Queries
+  alias ChowChaser.FoodTrucks.{FoodTruck, Queries}
   alias ChowChaser.Repo
+  alias Ecto.Multi
 
   require Logger
 
@@ -21,6 +21,27 @@ defmodule ChowChaser.FoodTrucks do
   @spec all :: list(FoodTruck.t())
   def all do
     Repo.all(FoodTruck)
+  end
+
+  @spec upsert_all(list(FoodTruck.params()) | FoodTruck.params()) ::
+          {:ok, list(FoodTruck.t())} | {:error, term()}
+  def upsert_all(food_trucks) do
+    result =
+      food_trucks
+      |> List.wrap()
+      |> Enum.with_index()
+      |> Enum.reduce(Multi.new(), fn {food_truck, index}, multi ->
+        Multi.insert(multi, "food_truck_#{index}", FoodTruck.create_changeset(food_truck),
+          on_conflict: {:replace_all_except, [:id, :object_id]},
+          conflict_target: [:object_id]
+        )
+      end)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, food_trucks} -> {:ok, Map.values(food_trucks)}
+      {:error, _failed_op, _reason, _changes} -> {:error, "Failed to insert food trucks"}
+    end
   end
 
   @spec list_by(map()) :: {:ok, list(FoodTruck.t())} | {:error, term()}

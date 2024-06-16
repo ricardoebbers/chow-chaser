@@ -2,7 +2,9 @@ defmodule ChowChaser.FoodTrucks.Queries do
   @moduledoc """
   Queries for the FoodTrucks aggregate.
   """
+
   alias ChowChaser.FoodTrucks.FoodTruck
+
   import Ecto.Query
   import Geo.PostGIS
 

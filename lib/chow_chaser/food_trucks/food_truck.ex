@@ -6,20 +6,24 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
   """
 
   use Ecto.Schema
+
   alias ChowChaser.FoodTrucks.FoodItem
   alias Geo.PostGIS.Geometry
+
   import Ecto.Changeset
 
   @type t :: %__MODULE__{
           id: integer(),
           address: String.t(),
           applicant: String.t(),
-          distance: float(),
-          object_id: integer(),
-          status: atom() | String.t(),
+          food_items: list(FoodItem.t()),
           location_description: String.t(),
           location: Geo.Point.t(),
-          food_items: list(FoodItem.t()),
+          object_id: integer(),
+          status: atom() | String.t(),
+          distance: float() | nil,
+          latitude: float() | nil,
+          longitude: float() | nil,
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
@@ -36,8 +40,8 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
         }
 
   @status_values ~w(approved expired issued requested suspend)a
-
-  @fields ~w(address applicant location_description location object_id status)a
+  @required ~w(address applicant location_description location object_id status)a
+  @location_params ~w(latitude longitude)a
 
   schema "food_trucks" do
     field :address, :string
@@ -48,33 +52,36 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
     field :status, Ecto.Enum, values: @status_values
 
     field :distance, :float, virtual: true
+    field :latitude, :float, virtual: true
+    field :longitude, :float, virtual: true
 
     many_to_many :food_items, FoodItem,
       join_through: "food_trucks_items",
-      preload_order: [asc: :name]
+      preload_order: [asc: :name],
+      on_replace: :delete
 
     timestamps(type: :utc_datetime)
   end
 
-  @spec changeset(t(), params()) :: Ecto.Changeset.t(t())
-  def changeset(food_truck, params) do
-    params = prepare_location(params)
+  @spec create_changeset(params()) :: Ecto.Changeset.t(t())
+  def create_changeset(params), do: changeset(%__MODULE__{}, params)
 
+  defp changeset(food_truck, params) do
     food_truck
-    |> cast(params, @fields)
-    |> validate_required(@fields)
-    |> cast_assoc(:food_items)
+    |> cast(params, @required ++ @location_params)
+    |> cast_location()
+    |> validate_required(@required)
+    |> put_assoc(:food_items, FoodItem.upsert_all(params))
   end
 
-  defp prepare_location(params = %{"latitude" => latitude, "longitude" => longitude}) do
-    Map.put(params, "location", point_params(latitude, longitude))
+  defp cast_location(changeset) do
+    with latitude when is_float(latitude) <- get_change(changeset, :latitude),
+         longitude when is_float(longitude) <- get_change(changeset, :longitude) do
+      put_change(changeset, :location, point_params(latitude, longitude))
+    else
+      _ -> changeset
+    end
   end
-
-  defp prepare_location(params = %{latitude: latitude, longitude: longitude}) do
-    Map.put(params, :location, point_params(latitude, longitude))
-  end
-
-  defp prepare_location(params), do: params
 
   defp point_params(latitude, longitude) do
     %Geo.Point{coordinates: {longitude, latitude}, srid: 4326}

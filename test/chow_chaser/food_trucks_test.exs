@@ -1,9 +1,9 @@
 defmodule ChowChaser.FoodTrucksTest do
   @moduledoc false
-  use ChowChaser.DataCase
+  use ChowChaser.DataCase, async: true
 
   alias ChowChaser.FoodTrucks
-  alias ChowChaser.FoodTrucks.FoodTruck
+  alias ChowChaser.FoodTrucks.{FoodItem, FoodTruck}
 
   describe "all/0" do
     test "returns empty list" do
@@ -77,6 +77,55 @@ defmodule ChowChaser.FoodTrucksTest do
 
       assert {:ok, [%{food_items: [%{name: "Burritos"}]}]} =
                FoodTrucks.list_by(%{food_types: "Burritos"})
+    end
+  end
+
+  describe "upsert_all/1" do
+    test "inserts food trucks" do
+      food_trucks = [
+        %{
+          params_for(:food_truck, applicant: "Brazuca Grill", object_id: 123)
+          | food_items: "Brazilian"
+        },
+        %{
+          params_for(:food_truck, applicant: "CARDONA'S FOOD TRUCK", object_id: 456)
+          | food_items: "Tacos: Burritos"
+        }
+      ]
+
+      assert {:ok, _} = FoodTrucks.upsert_all(food_trucks)
+    end
+
+    test "upserts existing food trucks based on their object id" do
+      %{id: original_id} = insert(:food_truck, applicant: "Brazuca Grill", object_id: 123)
+
+      food_trucks = [
+        params_for(:food_truck, applicant: "Another Grill", object_id: 123, food_items: [])
+      ]
+
+      assert {:ok, [food_truck]} = FoodTrucks.upsert_all(food_trucks)
+
+      assert %{id: ^original_id, applicant: "Another Grill", object_id: 123} = food_truck
+    end
+
+    test "creates new food items" do
+      food_trucks = [params_for(:food_truck) |> Map.put(:food_items, "Burritos")]
+
+      assert {:ok, [food_truck]} = FoodTrucks.upsert_all(food_trucks)
+
+      assert %{food_items: [%{name: "Burritos"}]} = food_truck
+      assert Repo.aggregate(FoodItem, :count) == 1
+    end
+
+    test "associates with existing food items" do
+      insert(:food_item, name: "Burritos")
+
+      food_trucks = [params_for(:food_truck) |> Map.put(:food_items, "Burritos")]
+
+      assert {:ok, [food_truck]} = FoodTrucks.upsert_all(food_trucks)
+
+      assert %{food_items: [%{name: "Burritos"}]} = food_truck
+      assert Repo.aggregate(FoodItem, :count) == 1
     end
   end
 end

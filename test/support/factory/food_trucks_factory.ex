@@ -8,7 +8,7 @@ defmodule ChowChaser.Factory.FoodTrucksFactory do
 
       def food_item_factory do
         %FoodItem{
-          name: sequence(:food_item, ["Tacos", "Burguers", "Pizzas"])
+          name: sequence(:food_item, &"Food Item #{&1}")
         }
       end
 
