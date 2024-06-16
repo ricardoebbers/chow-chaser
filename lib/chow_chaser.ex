@@ -6,4 +6,10 @@ defmodule ChowChaser do
   Contexts are also responsible for managing your data, regardless
   if it comes from the database, an external API or others.
   """
+
+  alias ChowChaser.FoodTrucks
+
+  @spec upsert_all(list(FoodTrucks.FoodTruck.params())) ::
+          {:ok, list(FoodTrucks.FoodTruck.t())} | {:error, term()}
+  defdelegate upsert_all(args), to: FoodTrucks
 end

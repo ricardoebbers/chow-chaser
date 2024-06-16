@@ -45,6 +45,8 @@
 * Include a map visualization of the food trucks
 * Make it social
   * Allow users to rate and review food trucks, mark them as favorites and share them with friends
+* Improve on cleaning up food items
+  * Aggregate similar food items (rice dishes, rice krispies, rice noodles, rice placet, rice plates, etc)
 
 ## Setting up
 

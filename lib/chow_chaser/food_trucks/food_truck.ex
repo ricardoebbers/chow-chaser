@@ -40,13 +40,14 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
         }
 
   @status_values ~w(approved expired issued requested suspend)a
-  @required ~w(address applicant location_description location object_id status)a
+  @required ~w(address applicant location object_id status)a
+  @optional ~w(location_description)a
   @location_params ~w(latitude longitude)a
 
   schema "food_trucks" do
     field :address, :string
     field :applicant, :string
-    field :location_description, :string
+    field :location_description, :string, default: ""
     field :location, Geometry
     field :object_id, :integer
     field :status, Ecto.Enum, values: @status_values
@@ -67,12 +68,23 @@ defmodule ChowChaser.FoodTrucks.FoodTruck do
   def create_changeset(params), do: changeset(%__MODULE__{}, params)
 
   defp changeset(food_truck, params) do
+    params = params |> prepare_status()
+
     food_truck
-    |> cast(params, @required ++ @location_params)
+    |> cast(params, @required ++ @optional ++ @location_params, empty_values: [[], nil])
     |> cast_location()
     |> validate_required(@required)
-    |> put_assoc(:food_items, FoodItem.upsert_all(params))
   end
+
+  defp prepare_status(params = %{"status" => status}) when is_binary(status) do
+    %{params | "status" => String.downcase(status)}
+  end
+
+  defp prepare_status(params = %{status: status}) when is_binary(status) do
+    %{params | status: String.downcase(status)}
+  end
+
+  defp prepare_status(params), do: params
 
   defp cast_location(changeset) do
     with latitude when is_float(latitude) <- get_change(changeset, :latitude),

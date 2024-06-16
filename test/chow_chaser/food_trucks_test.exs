@@ -83,14 +83,10 @@ defmodule ChowChaser.FoodTrucksTest do
   describe "upsert_all/1" do
     test "inserts food trucks" do
       food_trucks = [
-        %{
-          params_for(:food_truck, applicant: "Brazuca Grill", object_id: 123)
-          | food_items: "Brazilian"
-        },
-        %{
-          params_for(:food_truck, applicant: "CARDONA'S FOOD TRUCK", object_id: 456)
-          | food_items: "Tacos: Burritos"
-        }
+        params_for(:food_truck, applicant: "Brazuca Grill", object_id: 123, status: "REQUESTED")
+        |> Map.merge(%{food_items: "Brazilian", location_description: nil}),
+        params_for(:food_truck, applicant: "CARDONA'S FOOD TRUCK", object_id: 456)
+        |> Map.merge(%{food_items: "Tacos: Burritos", latitude: 30.0, longitude: 40.0})
       ]
 
       assert {:ok, _} = FoodTrucks.upsert_all(food_trucks)
