@@ -16,7 +16,7 @@ defmodule ChowChaser.FoodTrucks do
 
     object_ids_to_item_names =
       Enum.map(params, fn params ->
-        object_id = get_value(params, :object_id, "") |> to_string() |> String.to_integer()
+        object_id = get_value(params, :object_id, 0) |> to_string() |> String.to_integer()
         items = get_value(params, :items, [])
         {object_id, items}
       end)
@@ -34,35 +34,47 @@ defmodule ChowChaser.FoodTrucks do
 
   @spec list_all :: list(Truck.t())
   def list_all do
-    Repo.all(Truck)
+    TruckQueries.new()
+    |> TruckQueries.with_items()
+    |> Repo.all()
   end
 
-  @spec list_by(map()) :: {:ok, list(Truck.t())} | {:error, term()}
-  def list_by(filters = %{reference: reference}) do
+  @spec list_by(map()) :: list(Truck.t())
+  def list_by(filters = %{"reference" => reference}) do
+    filters = to_atom_map(filters)
+
     case Geocoder.call(reference) do
       {:ok, %Geocoder.Coords{lat: latitude, lon: longitude}} ->
-        filters =
-          filters
-          |> Map.put(:coordinates, {longitude, latitude})
-          |> Map.put(:radius, Map.get(filters, :radius, 500))
-
-        do_list_by(filters)
+        filters
+        |> Map.put(:coordinates, {longitude, latitude})
+        |> Map.put(:radius, Map.get(filters, :radius, 1000))
+        |> do_list_by()
 
       {:error, nil} ->
-        {:error, "Invalid address"}
+        # falls back to searching by the address or location description
+        filters
+        |> Map.delete(:reference)
+        |> Map.put(:address, reference)
+        |> do_list_by()
     end
   end
 
-  def list_by(filters), do: do_list_by(filters)
+  def list_by(filters) do
+    filters
+    |> to_atom_map()
+    |> do_list_by()
+  end
+
+  def search_params do
+    Truck.changeset(%Truck{}, %{})
+  end
 
   defp do_list_by(filters) do
-    trucks =
-      TruckQueries.new()
-      |> TruckQueries.filter_by(filters)
-      |> TruckQueries.with_distances(filters)
-      |> Repo.all()
-
-    {:ok, trucks}
+    TruckQueries.new()
+    |> TruckQueries.filter_by(filters)
+    |> TruckQueries.with_distances(filters)
+    |> TruckQueries.with_items()
+    |> Repo.all()
   end
 
   defp do_upsert_all(items_params, truck_params, object_ids_to_item_names) do
@@ -76,5 +88,12 @@ defmodule ChowChaser.FoodTrucks do
 
   defp get_value(map, key, default) do
     Map.get(map, key) || Map.get(map, Atom.to_string(key)) || default
+  end
+
+  defp to_atom_map(map) do
+    Map.new(map, fn
+      {k, v} when is_binary(k) -> {String.to_atom(k), v}
+      {k, v} -> {k, v}
+    end)
   end
 end

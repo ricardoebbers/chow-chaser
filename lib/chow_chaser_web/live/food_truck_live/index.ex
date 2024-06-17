@@ -3,16 +3,27 @@ defmodule ChowChaserWeb.FoodTruckLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :food_trucks, ChowChaser.list_all())}
+    {:ok,
+     socket
+     |> assign(:form, to_form(ChowChaser.search_params()))
+     |> stream(:food_trucks, ChowChaser.list_all())}
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
   end
 
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Food trucks in San Francisco")
+  @impl true
+  def handle_event("search", %{"truck" => params}, socket) do
+    params = %{
+      params
+      | "reference" => "#{params["reference"]}, San Francisco",
+        "status" => "approved"
+    }
+
+    {:noreply,
+     socket
+     |> stream(:food_trucks, ChowChaser.list_by(params), reset: true)}
   end
 end

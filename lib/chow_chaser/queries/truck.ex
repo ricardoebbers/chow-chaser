@@ -34,6 +34,18 @@ defmodule ChowChaser.Queries.Truck do
     |> filter_by(Map.drop(filters, [:items]))
   end
 
+  def filter_by(queryable, filters = %{location_description: location_description}) do
+    queryable
+    |> where([truck: t], ilike(t.location_description, ^"%#{location_description}%"))
+    |> filter_by(Map.drop(filters, [:location_description]))
+  end
+
+  def filter_by(queryable, filters = %{address: address}) do
+    queryable
+    |> where([truck: t], ilike(t.address, ^"%#{address}%"))
+    |> filter_by(Map.drop(filters, [:address]))
+  end
+
   def filter_by(queryable, filters) do
     valid_filters = Truck.__schema__(:fields)
 

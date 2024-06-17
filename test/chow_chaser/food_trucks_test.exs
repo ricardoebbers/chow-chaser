@@ -5,14 +5,14 @@ defmodule ChowChaser.FoodTrucksTest do
   alias ChowChaser.FoodTrucks
   alias ChowChaser.Models.{Item, Truck}
 
-  describe "all/0" do
+  describe "list_all/0" do
     test "returns empty list" do
-      assert [] == FoodTrucks.all()
+      assert [] == FoodTrucks.list_all()
     end
 
     test "lists all food trucks" do
       insert_list(2, :truck)
-      assert length(FoodTrucks.all()) == 2
+      assert length(FoodTrucks.list_all()) == 2
     end
   end
 
@@ -41,8 +41,6 @@ defmodule ChowChaser.FoodTrucksTest do
     test "filters by address and radius" do
       address = "150 OTIS ST"
 
-      {:ok, trucks} = FoodTrucks.list_by(%{reference: address, radius: 400})
-
       assert [
                %Truck{address: "150 OTIS ST", applicant: "Brazuca Grill", distance: 86.122089},
                %Truck{
@@ -50,26 +48,26 @@ defmodule ChowChaser.FoodTrucksTest do
                  applicant: "CARDONA'S FOOD TRUCK",
                  distance: 394.33132991
                }
-             ] = trucks
+             ] = FoodTrucks.list_by(%{"reference" => address, "radius" => 400})
     end
 
     test "filters by status" do
-      assert {:ok, [%{status: :expired}]} = FoodTrucks.list_by(%{status: "expired"})
+      assert [%{status: :expired}] = FoodTrucks.list_by(%{status: "expired"})
     end
 
     test "filters by address" do
-      assert {:ok, [%{address: "150 OTIS ST"}]} = FoodTrucks.list_by(%{address: "150 OTIS ST"})
+      assert [%{address: "150 OTIS ST"}] = FoodTrucks.list_by(%{address: "150 OTIS ST"})
     end
 
     test "filters by applicant" do
-      assert {:ok, [%{applicant: "Brazuca Grill"}, %{applicant: "Brazuca Grill"}]} =
+      assert [%{applicant: "Brazuca Grill"}, %{applicant: "Brazuca Grill"}] =
                FoodTrucks.list_by(%{applicant: "Brazuca Grill"})
     end
 
     test "filters by items" do
       insert(:truck, items: [build(:item, name: "Burritos")])
 
-      assert {:ok, [%{items: [%{name: "Burritos"}]}]} =
+      assert [%{items: [%{name: "Burritos"}]}] =
                FoodTrucks.list_by(%{items: "Burritos"})
     end
   end

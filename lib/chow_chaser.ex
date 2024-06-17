@@ -16,6 +16,9 @@ defmodule ChowChaser do
   @spec list_all() :: list(Truck.t())
   defdelegate list_all, to: FoodTrucks
 
-  @spec list_by(map()) :: {:ok, list(Truck.t())} | {:error, term()}
+  @spec list_by(map()) :: list(Truck.t())
   defdelegate list_by(filters), to: FoodTrucks
+
+  @spec search_params() :: Ecto.Changeset.t()
+  defdelegate search_params, to: FoodTrucks
 end
