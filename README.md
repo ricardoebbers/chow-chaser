@@ -3,6 +3,8 @@
 ChowChaser is a Phoenix-based web application designed to help food enthusiasts locate food trucks in San Francisco. It leverages geospatial data to provide users with an easy way to find food trucks near a given location, synchronized with the most recent city's open data on food trucks.
 
 ## Showcase
+https://github.com/ricardoebbers/chow-chaser/assets/20364528/9b9af526-543c-4de4-b210-1705788a334a
+
 
 
 ## Features
