@@ -5,8 +5,6 @@ ChowChaser is a Phoenix-based web application designed to help food enthusiasts 
 ## Showcase
 https://github.com/ricardoebbers/chow-chaser/assets/20364528/9b9af526-543c-4de4-b210-1705788a334a
 
-
-
 ## Features
 - [x] List Food Trucks in San Francisco filtered by:
   - [x] Food trucks near a given location
@@ -48,15 +46,59 @@ https://github.com/ricardoebbers/chow-chaser/assets/20364528/9b9af526-543c-4de4-
 - **Data Cleaning:** Improve on cleaning up food items by aggregating similar types (e.g., rice dishes, rice krispies, rice noodles, rice plates, etc.).
 
 ## Setting up
-### Requirements
+### Docker setup
+#### Requirements
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 - Ports 4000 and 5432 available
 
-### Running the server
+#### Running the application
 
 Use `docker-compose` to start the server locally:
 ```bash
 docker-compose up -d
 ```
+Visit the page in http://localhost:4000
+
+### Local setup
+#### Requirements
+##### Postgres with PostGIS extension
+- [Postgres](https://www.postgresql.org/download/)
+- [PostGIS](https://postgis.net/documentation/getting_started/#installing-postgis)
+
+##### Elixir/Erlang
+I recommend using asdf to manage your Elixir and Erlang versions. You can find instructions on how to install asdf [here](https://asdf-vm.com/#/core-manage-asdf-vm).
+
+Otherwise, you can install Elixir and Erlang manually:
+- [Elixir](https://elixir-lang.org/install.html)
+- [Erlang](https://www.erlang.org/downloads)
+
+##### Phoenix Framework
+- [Phoenix](https://hexdocs.pm/phoenix/installation.html)
+
+##### Setup the environment
+Fetch and compile the dependencies:
+```bash
+mix deps.get
+mix deps.compile
+```
+
+Run the following commands to create the database, run the migrations and build the assets:
+```bash
+mix ecto.setup
+```
+
+Run the one-off task to synchronize the food trucks
+```bash
+mix one_offs.sync_trucks
+```
+
+#### Running the application
+
+Start the Phoenix server:
+```bash
+iex -S mix.phx.server
+```
+
 Visit the page in http://localhost:4000

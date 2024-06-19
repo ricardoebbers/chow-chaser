@@ -1,19 +1,31 @@
 services:
   app:
-    container_name: "chow-chaser-app"
     build:
       context: .
       dockerfile: Dockerfile-dev
+    command: sh ./bin/entrypoint.sh
+    container_name: app
+    stdin_open: true
     ports:
       - 4000:4000
-    depends_on:
-      - db
     env_file:
       - env/dev.env
     volumes:
+      - ./bin/entrypoint.sh:/bin/entrypoint.sh
+      - .bin/wait-for-it.sh:/bin/wait-for-it.sh
       - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: /bin/wait-for-it.sh localhost:4000 --strict -- echo "Healthy!"
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
   db:
-    container_name: "chow-chaser-db"
+    container_name: db
+    hostname: postgres
     image: postgis/postgis:15-3.4
     platform: linux/amd64
     ports:
@@ -22,6 +34,12 @@ services:
       - env/dev.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U postgres -h 127.0.0.1
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 15s
 
 volumes:
   postgres_data:
