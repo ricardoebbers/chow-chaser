@@ -16,11 +16,12 @@ defmodule ChowChaserWeb.FoodTruckLive.Index do
 
   @impl true
   def handle_event("search", %{"truck" => params}, socket) do
-    params = %{
+    params =
       params
-      | "reference" => "#{params["reference"]}, San Francisco",
+      |> Map.merge(%{
+        "reference" => "#{params["reference"]}, San Francisco",
         "status" => "approved"
-    }
+      })
 
     {:noreply,
      socket
